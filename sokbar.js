@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name        SokBar
+// @namespace   com.koster1889.dev
+// @description Search bar selection by key shortcut.
+// @include     *
+// @version     1
+// @grant       none
+// ==/UserScript==
+
+
 LKey = 76
 
 currentLocation = new URL(window.location).hostname

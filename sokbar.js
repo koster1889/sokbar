@@ -7,31 +7,41 @@
 // @grant       none
 // ==/UserScript==
 
+(function() {
+    "use strict";
 
-LKey = 76
+    const L_KEY = 76;
 
-currentLocation = new URL(window.location).hostname
+    const currentLocation = new URL(window.location).hostname;
 
-searchElementFinder = {
-  "sv.wikipedia.org": function() {
-    return document.getElementById("searchInput");
-  },"en.wikipedia.org": function() {
-    return document.getElementById("searchInput");
-  } // More to be added as we go
-}
+    const searchElementFinders = {
+        "sv.wikipedia.org": function() {
+            return document.getElementById("searchInput");
+        },
+        "en.wikipedia.org": function() {
+            return document.getElementById("searchInput");
+        },
+        default: function() {
+            return document.getElementsByName("q")[0];
+        }
+    };
 
-if (currentLocation in searchElementFinder) {
-  finder = searchElementFinder[currentLocation]
-} else {
-  finder = function () {
-    // Standard stuff
-    return document.getElementsByName("q")[0];
-  }
-}
+    window.onkeyup = function(e) {
+        const key = e.keyCode ? e.keyCode : e.which;
+        if (key === L_KEY && e.shiftKey && e.ctrlKey) {
+            findElement();
+        }
+    };
 
-window.onkeyup = function(e) {
-  var key = e.keyCode ? e.keyCode : e.which;
-  if (e.shiftKey && key == LKey && e.ctrlKey) {
-    finder().select();
-  }
-	}
+    const finder = searchElementFinders[currentLocation] || searchElementFinders.default;
+
+    function findElement() {
+        var searchElement = finder();
+        if (searchElement) {
+            searchElement.select();
+        } else {
+            console.debug("Sokbar: No search input found for %s", currentLocation);
+        }
+    }
+
+})();
